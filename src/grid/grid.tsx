@@ -40,6 +40,7 @@ const generateNodes = (n: number, firstNote: Note): Note[] => {
   return retval;
 };
 
+// f (props)
 function Grid({ frets }: { frets: number }) {
   const [fretboard] = React.useState<Note[][]>(() => {
     const strings = Array(STRINGS).fill(null);
