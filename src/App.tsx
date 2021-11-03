@@ -1,11 +1,12 @@
-import React from 'react';
-import './App.css';
-import Grid from './grid';
+import React from "react";
+import "./App.css";
+import Grid from "./grid/grid";
+import randomService from "./services/random";
 
 function App() {
   return (
     <div className="App">
-      <Grid frets={12} />
+      <Grid randomService={randomService(Math.random)} frets={15} />
     </div>
   );
 }

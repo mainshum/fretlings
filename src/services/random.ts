@@ -1,43 +1,23 @@
-import { first } from "fp-ts/lib/Semigroup";
+export interface RandomService {
+  genNoReps: <T>(xs: T[]) => Generator<T, string, boolean>;
+}
 
-export default function random(getRandom: () => number = Math.random) {
-  function getRandomAr<T>(ar: T[]): T {
-    const int = 1 / ar.length;
-    const r = getRandom();
-    let intInd = 0;
-    while (true) {
-      const [a, b] = [intInd * int, (intInd + 1) * int];
-      if (r >= a && r <= b) return ar[intInd];
-
-      intInd += 1;
-    }
+export default function random(
+  getRandom: () => number = Math.random
+): RandomService {
+  function getRandomArInd<T>(ar: T[]): number {
+    return Math.floor(ar.length * getRandom());
   }
-  function* genPairsNoReps<T>(pairs: T[][]): any {
-    const indMap: Record<string, Record<string, T>> = pairs.reduce(
-      (acc, first, firstInd) => {
-        return {
-          ...acc,
-          ...first.map((snd, sndInd) => ({
-            [sndInd.toString()]: [first, snd],
-          })),
-        };
-      },
-      {}
-    );
-
+  function* genNoReps<T>(vals: T[]): Generator<T, string, boolean> {
+    const copy = vals.slice();
     while (true) {
-      if (Object.keys(indMap).length === 0) return "Done";
-
-      const rFirst = getRandomAr(Object.keys(indMap));
-      const rSecond = getRandomAr(Object.keys(rFirst));
-
-      yield indMap[rFirst][rSecond];
-      delete indMap[rFirst][rSecond];
-      if (Object.keys(indMap[rFirst]).length === 0) delete indMap[rFirst];
+      if (copy.length === 0) return "Done";
+      const randomInd = getRandomArInd(copy);
+      yield copy.splice(randomInd, 1)[0];
     }
   }
 
   return {
-    genPairsNoReps,
+    genNoReps,
   };
 }
